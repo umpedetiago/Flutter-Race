@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:meuapp/shared/utils/app_state.dart';
 
-class CreateAccountContrller {
-  final formkey = GlobalKey<FormState>();
+class CreateAccountController extends ChangeNotifier {
+  AppState state = AppState.empty();
+
+  final formKey = GlobalKey<FormState>();
   String _email = "";
   String _password = "";
   String _name = "";
@@ -10,11 +13,15 @@ class CreateAccountContrller {
     _email = email ?? _email;
     _password = password ?? _password;
     _name = name ?? _name;
-    print("email: $_email | password: $_password |name: $_name");
+  }
+
+  void update(AppState state) {
+    this.state = state;
+    notifyListeners();
   }
 
   bool validate() {
-    final form = formkey.currentState!;
+    final form = formKey.currentState!;
     if (form.validate()) {
       form.save();
       return true;
@@ -22,9 +29,15 @@ class CreateAccountContrller {
     return false;
   }
 
-  void create() {
+  Future<void> create() async {
     if (validate()) {
-      print("pode chamar o backeend");
+      try {
+        update(AppState.loading());
+        await Future.delayed(Duration(seconds: 3));
+        update(AppState.success<String>("Deu certo"));
+      } catch (e) {
+        update(AppState.error("Não foi possível criar conta"));
+      }
     }
   }
 }

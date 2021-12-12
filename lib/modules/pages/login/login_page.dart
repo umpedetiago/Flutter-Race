@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
                   'assets/images/logo.png',
                   width: 223,
                 ),
-                InPutText(
+                InputText(
                   label: 'E-mail',
                   hint: 'Digite seu email',
                   onChanged: print,
@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   height: 18,
                 ),
-                InPutText(
+                InputText(
                   label: 'Senha',
                   hint: 'Digite sua senha',
                   obscure: true,

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:meuapp/shared/theme/app_text.dart';
 import 'package:meuapp/shared/theme/app_theme.dart';
 
-class InPutText extends StatelessWidget {
+class InputText extends StatelessWidget {
   final String label;
   final String hint;
   final bool obscure;
   final void Function(String)? onChanged;
   final String? Function(String?)? validator;
-  const InPutText({
+  const InputText({
     Key? key,
     required this.label,
     required this.hint,

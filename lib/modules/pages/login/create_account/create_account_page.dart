@@ -2,34 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:meuapp/modules/pages/login/create_account/create-account-controller.dart';
 import 'package:meuapp/shared/theme/app_theme.dart';
 import 'package:meuapp/shared/widgets/button/button.dart';
-import 'package:meuapp/shared/widgets/input_text/input_text.dart';
 import 'package:validators/validators.dart';
+import 'package:meuapp/shared/widgets/input_text/input_text.dart';
 
-class CreateAccount extends StatefulWidget {
-  const CreateAccount({Key? key}) : super(key: key);
+class CreateAccountPage extends StatefulWidget {
+  const CreateAccountPage({Key? key}) : super(key: key);
 
   @override
-  State<CreateAccount> createState() => _CreateAccountState();
+  State<CreateAccountPage> createState() => _CreateAccountPageState();
 }
 
-class _CreateAccountState extends State<CreateAccount> {
-  final controller = CreateAccountContrller();
+class _CreateAccountPageState extends State<CreateAccountPage> {
+  final controller = CreateAccountController();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    controller.addListener(() {
+      controller.state.when(
+          success: (value) => Navigator.pushNamed(context, "/home"),
+          error: (message, _) => scaffoldKey.currentState!
+              .showBottomSheet((context) => BottomSheet(
+                  onClosing: () {},
+                  builder: (context) => Container(
+                        child: Text(message),
+                      ))),
+          orElse: () {});
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppTheme.colors.background,
-        leading: BackButton(
-          color: AppTheme.colors.backButton,
+        appBar: AppBar(
+          backgroundColor: AppTheme.colors.background,
+          leading: BackButton(
+            color: AppTheme.colors.backButton,
+          ),
+          elevation: 0,
         ),
-        elevation: 0,
-      ),
-      backgroundColor: AppTheme.colors.background,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
-        child: SingleChildScrollView(
+        backgroundColor: AppTheme.colors.background,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
           child: Form(
-            key: controller.formkey,
+            key: controller.formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,56 +64,61 @@ class _CreateAccountState extends State<CreateAccount> {
                 SizedBox(
                   height: 10,
                 ),
-                Text(
-                  "Mantenha seus gastos em dia",
-                  style: AppTheme.textStyles.subititle,
-                ),
+                Text("Mantenha seus gastos em dia",
+                    style: AppTheme.textStyles.subtitle),
                 SizedBox(
                   height: 38,
                 ),
-                InPutText(
-                  label: 'Nome',
-                  hint: 'Digite seu nome completo',
-                  onChanged: (value) => controller.onChange(name: value),
+                InputText(
+                  label: "Nome",
+                  hint: "Digite seu nome completo",
                   validator: (value) =>
                       value!.isNotEmpty ? null : "Digite seu nome completo",
+                  onChanged: (value) => controller.onChange(name: value),
                 ),
                 SizedBox(
                   height: 18,
                 ),
-                InPutText(
-                  label: 'E-mail',
-                  hint: 'Digite seu email',
+                InputText(
+                  label: "E-mail",
+                  hint: "Digite seu email",
+                  validator: (value) =>
+                      isEmail(value!) ? null : "Digite um e-mail válido",
                   onChanged: (value) => controller.onChange(email: value),
-                  validator: (value) =>
-                      isEmail(value!) ? null : 'digite um e-mail valido',
                 ),
                 SizedBox(
                   height: 18,
                 ),
-                InPutText(
+                InputText(
+                  label: "Senha",
                   obscure: true,
-                  label: 'Senha',
-                  hint: 'Digite sua senha',
-                  onChanged: (value) => controller.onChange(password: value),
+                  hint: "Digite sua senha",
                   validator: (value) =>
-                      value!.length >= 6 ? null : "digite uma senha valida",
+                      value!.length >= 6 ? null : "Digite uma senha mais forte",
+                  onChanged: (value) => controller.onChange(password: value),
                 ),
                 SizedBox(
                   height: 14,
                 ),
-                Button(
-                  label: 'Criar conta',
-                  type: ButtonType.fill,
-                  onTap: () {
-                    controller.create();
-                  },
-                ),
+                AnimatedBuilder(
+                    animation: controller,
+                    builder: (_, __) => controller.state.when(
+                          loading: () => Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(),
+                            ],
+                          ),
+                          orElse: () => Button(
+                            label: "Criar conta",
+                            onTap: () {
+                              controller.create();
+                            },
+                          ),
+                        ))
               ],
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

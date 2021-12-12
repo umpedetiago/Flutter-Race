@@ -15,7 +15,7 @@ class AppWidiget extends StatelessWidget {
       routes: {
         "/splash": (context) => const SplashPage(),
         "/login": (context) => const LoginPage(),
-        "/login/create-account": (context) => const CreateAccount(),
+        "/login/create-account": (context) => const CreateAccountPage(),
       },
     );
   }
