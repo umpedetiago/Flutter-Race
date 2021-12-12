@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:meuapp/shared/utils/app_state.dart';
 
-class LoginContrller extends ChangeNotifier {
-  var state = AppState.empty();
-  final formkey = GlobalKey<FormState>();
+class LoginController extends ChangeNotifier {
+  AppState state = AppState.empty();
+
+  final formKey = GlobalKey<FormState>();
   String _email = "";
   String _password = "";
 
   void onChange({String? email, String? password}) {
     _email = email ?? _email;
     _password = password ?? _password;
-    print("email: $_email | password: $_password");
   }
 
   bool validate() {
-    final form = formkey.currentState!;
+    final form = formKey.currentState!;
     if (form.validate()) {
       form.save();
       return true;
@@ -27,9 +27,18 @@ class LoginContrller extends ChangeNotifier {
     notifyListeners();
   }
 
-  void login() {
+  Future<void> login() async {
     if (validate()) {
-      print("pode chamar o backeend");
+      try {
+        update(AppState.loading());
+        await Future.delayed(Duration(seconds: 4));
+
+        update(AppState.success<String>("Usuario logado"));
+      } catch (e) {
+        update(AppState.error(
+          "Não foi possível realizar login",
+        ));
+      }
     }
   }
 }
