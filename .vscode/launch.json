@@ -7,7 +7,12 @@
         {
             "name": "meuapp",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": [
+                "--dart-define", "SUPABASEURL=https://hjauzghhavavenqjvurr.supabase.co",
+                    "--dart-define", "SUPABASEKEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzOTMxNjIwMiwiZXhwIjoxOTU0ODkyMjAyfQ.SL-qTdZGd5-jdZeXWNZIxxn2uEkbBCRjlnbWS8d2184"
+
+            ]
         },
         {
             "name": "meuapp (profile mode)",

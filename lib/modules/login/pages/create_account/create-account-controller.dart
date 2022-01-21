@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:meuapp/modules/login/repositories/login_repository.dart';
+import 'package:meuapp/shared/models/user_model.dart';
+import 'package:meuapp/shared/services/app_database.dart';
 import 'package:meuapp/shared/utils/app_state.dart';
 
 class CreateAccountController extends ChangeNotifier {
+  final LoginRepository repository;
   AppState state = AppState.empty();
 
   final formKey = GlobalKey<FormState>();
   String _email = "";
   String _password = "";
   String _name = "";
+
+  CreateAccountController({required this.repository});
 
   void onChange({String? email, String? password, String? name}) {
     _email = email ?? _email;
@@ -33,10 +39,14 @@ class CreateAccountController extends ChangeNotifier {
     if (validate()) {
       try {
         update(AppState.loading());
-        await Future.delayed(Duration(seconds: 3));
-        update(AppState.success<String>("Deu certo"));
+        final response = await repository.creatAccount(
+          email: _email,
+          password: _password,
+          name: _name,
+        );
+        update(AppState.success<UserModel>(response));
       } catch (e) {
-        update(AppState.error("Não foi possível criar conta"));
+        update(AppState.error(e.toString()));
       }
     }
   }
